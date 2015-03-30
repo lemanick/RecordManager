@@ -85,6 +85,7 @@ class RecordManager
     protected $nonInheritedFields = array();
     protected $prependParentTitleWithUnitId = null;
     protected $previousId = '[none]';
+    protected $fileReader = null;
 
     /**
      * Constructor
@@ -178,7 +179,12 @@ class RecordManager
         $count = 0;
         foreach (glob($files) as $file) {
             $this->log->log('loadFromFile', "Loading records from '$file' into '$source'");
-            $data = file_get_contents($file);
+            $data = false;
+            if ($this->fileReader) {
+                $data = $this->fileReader->read($file);
+            } else {
+                $data = file_get_contents($file);
+            }
             if ($data === false) {
                 throw new Exception("Could not read file '$file'");
             }
@@ -1262,6 +1268,19 @@ class RecordManager
             }
         } else {
             $this->recordSplitter = null;
+        }
+
+        if (isset($settings['fileReader'])) {
+            if (substr($settings['fileReader'], -4) === '.php') {
+                $className = substr($settings['fileReader'], 0, -4);
+                include_once $settings['fileReader'];
+                $transformationXSL = isset($settings['fileReaderTransformation']) ? $settings['fileReaderTransformation'] : null;
+                $this->fileReader = new $className($this->sourceId, $this->idPrefix, $this->basePath, $transformationXSL);
+            } else {
+                throw new Exception("Error: file reader '$className' for '$source' does not seem to be a PHP class");
+            }
+        } else {
+            $this->fileReader = null;
         }
 
         $this->keepMissingHierarchyMembers

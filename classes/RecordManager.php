@@ -39,7 +39,7 @@ require_once 'HarvestMetaLibExport.php';
 require_once 'HarvestSfx.php';
 require_once 'XslTransformation.php';
 require_once 'MetadataUtils.php';
-require_once 'SolrUpdater.php';
+require_once 'SolrUpdaterFactory.php';
 require_once 'PerformanceCounter.php';
 
 /**
@@ -127,7 +127,7 @@ class RecordManager
         MongoCursor::$timeout = isset($configArray['Mongo']['cursor_timeout']) ? $configArray['Mongo']['cursor_timeout'] : 300000;
 
         // Used for format mapping in dedup handler
-        $solrUpdater = new SolrUpdater($this->db, $this->basePath, $this->log, $this->verbose);
+        $solrUpdater = SolrUpdaterFactory::createSolrUpdater($this->db, $this->basePath, $this->log, $this->verbose);
         $dedupClass = isset($configArray['Site']['dedup_handler'])
             ? $configArray['Site']['dedup_handler']
             : 'DedupHandler';
@@ -365,7 +365,7 @@ class RecordManager
         $noCommit = false, $compare = '', $dumpPrefix = ''
     ) {
         global $configArray;
-        $updater = new SolrUpdater($this->db, $this->basePath, $this->log, $this->verbose);
+        $updater = SolrUpdaterFactory::createSolrUpdater($this->db, $this->basePath, $this->log, $this->verbose);
         return $updater->updateRecords(
             $fromDate, $sourceId, $singleId, $noCommit, false, $compare, $dumpPrefix
         );
@@ -877,7 +877,7 @@ class RecordManager
     {
         global $configArray;
 
-        $updater = new SolrUpdater($this->db, $this->basePath, $this->log, $this->verbose);
+        $updater = SolrUpdaterFactory::createSolrUpdater($this->db, $this->basePath, $this->log, $this->verbose);
         if (isset($configArray['Solr']['merge_records']) && $configArray['Solr']['merge_records']) {
             $this->log->log('deleteSolrRecords', "Deleting data source '$sourceId' from merged records via Solr update for merged records");
             $updater->updateRecords('', $sourceId, '', false, true);
@@ -894,7 +894,7 @@ class RecordManager
      */
     public function optimizeSolr()
     {
-        $updater = new SolrUpdater($this->db, $this->basePath, $this->log, $this->verbose);
+        $updater = SolrUpdaterFactory::createSolrUpdater($this->db, $this->basePath, $this->log, $this->verbose);
 
         $this->log->log('optimizeSolr', 'Optimizing Solr index');
         $updater->optimizeIndex();
@@ -1109,7 +1109,7 @@ class RecordManager
             echo "Field must be specified\n";
             exit;
         }
-        $updater = new SolrUpdater($this->db, $this->basePath, $this->log, $this->verbose);
+        $updater = SolrUpdaterFactory::createSolrUpdater($this->db, $this->basePath, $this->log, $this->verbose);
         $updater->countValues($sourceId, $field, $mapped);
     }
 

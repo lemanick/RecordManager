@@ -12,6 +12,8 @@ abbreviations = abbreviations.lst
 articles = articles.lst
 ; Deduplication handler class
 ; dedup_handler = DedupHandler
+; Solr updater class
+; solr_updater = SolrUpdater
 
 ; These settings control the OAI-PMH harvester
 [Harvesting]

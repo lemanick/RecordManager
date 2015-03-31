@@ -646,7 +646,17 @@ class RecordManager
                         $this->log->log('harvest', 'Reharvest date threshold: ' . strftime('%F %T', $dateThreshold->sec));
                     }
 
-                    $harvest = new HarvestOAIPMH($this->log, $this->db, $source, $this->basePath, $settings, $startResumptionToken);
+                    if (isset($configArray['OAI-PMH Harvest Classes'][$this->harvestType])) {
+                        $class = $configArray['OAI-PMH Harvest Classes'][$this->harvestType];
+                        $path = "{$class}.php";
+                        include_once $path;
+                        if (class_exists($class)) {
+                            $harvest = new $class($this->log, $this->db, $source, $this->basePath, $settings, $startResumptionToken);
+                        }
+                    } else {
+                        $harvest = new HarvestOAIPMH($this->log, $this->db, $source, $this->basePath, $settings, $startResumptionToken);
+                    }
+
                     if (isset($harvestFromDate)) {
                         $harvest->setStartDate($harvestFromDate == '-' ? null : $harvestFromDate);
                     }

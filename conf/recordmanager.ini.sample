@@ -21,6 +21,10 @@ articles = articles.lst
 ; Wait time between request attempts in seconds. Default is 30.
 ;retry_wait = 120
 
+; Custom OAI-PMH Harvest classes
+[OAI-PMH Harvest Classes]
+;custom_harvest_type = CustomHarvestOaiPmh
+
 [Mongo]
 ; url = mongodb://{username}:{password}@localhost
 ;url = mongodb://localhost

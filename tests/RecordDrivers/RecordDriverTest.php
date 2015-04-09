@@ -72,6 +72,21 @@ abstract class RecordDriverTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Load a sample metadata record from file
+     *
+     * @param string $sample Sample record file
+     *
+     * @return mixed Metadata record object
+     */
+    protected function loadSample($sample)
+    {
+        $actualdir = dirname(__FILE__);
+        $sample = file_get_contents($actualdir . "/../samples/" . $sample);
+        $record = RecordFactory::createRecord($this->driver, $sample, "__unit_test_no_id__", "__unit_test_no_source__");
+        return $record;
+    }
+
+    /**
      * Process a sample record
      *
      * @param string $sample Sample record file
@@ -80,9 +95,7 @@ abstract class RecordDriverTest extends PHPUnit_Framework_TestCase
      */
     protected function processSample($sample)
     {
-        $actualdir = dirname(__FILE__);
-        $sample = file_get_contents($actualdir . "/../samples/" . $sample);
-        $record = RecordFactory::createRecord($this->driver, $sample, "__unit_test_no_id__", "__unit_test_no_source__");
+        $record = $this->loadSample($sample);
         return $record->toSolrArray();
     }
 

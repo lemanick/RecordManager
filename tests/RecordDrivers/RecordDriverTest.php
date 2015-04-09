@@ -47,6 +47,18 @@ abstract class RecordDriverTest extends PHPUnit_Framework_TestCase
     protected $driver;
 
     /**
+     * Initialize arrays used by MetadataUtils.
+     *
+     * @return void
+     * @access public
+     */
+    public static function setUpBeforeClass()
+    {
+        MetadataUtils::$abbreviations = array();
+        MetadataUtils::$articles = array();
+    }
+
+    /**
      * Standard setup method.
      *
      * @return void

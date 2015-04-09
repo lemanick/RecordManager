@@ -66,8 +66,9 @@ abstract class RecordDriverTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        if(empty($this->driver))
+        if (empty($this->driver)) {
             $this->markTestIncomplete('Record driver needs to be set in subclass.');
+        }
     }
 
     /**

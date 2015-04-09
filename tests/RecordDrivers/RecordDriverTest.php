@@ -22,10 +22,12 @@
  * @category DataManagement
  * @package  RecordManager
  * @author   Eero Heikkinen <eero.heikkinen@gmail.com>
+ * @author   Leszek Manicki <leszek.z.manicki@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/KDK-Alli/RecordManager
  */
 
+require_once 'tests/PHPUnit/RecordManager/Constraint/SolrEquals.php';
 require_once 'classes/RecordFactory.php';
 require_once 'classes/MetadataUtils.php';
 
@@ -35,6 +37,7 @@ require_once 'classes/MetadataUtils.php';
  * @category DataManagement
  * @package  RecordManager
  * @author   Eero Heikkinen <eero.heikkinen@gmail.com>
+ * @author   Leszek Manicki <leszek.z.manicki@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/KDK-Alli/RecordManager
  */
@@ -69,4 +72,26 @@ abstract class RecordDriverTest extends PHPUnit_Framework_TestCase
         $record = RecordFactory::createRecord($this->driver, $sample, "__unit_test_no_id__", "__unit_test_no_source__");
         return $record->toSolrArray();
     }
+
+    /**
+     * Asserts that two Solr array entries are equal:
+     *  - array containg single element is considered to be
+     *    equal to the same separate element (not in array),
+     *  - order of elements in array is irrelevant.
+     *
+     * @param mixed  $expected Expected value
+     * @param mixed  $actual   Tested value
+     * @param string $message  Optional message
+     *
+     * @return mixed
+     */
+    public static function assertSolrEquals($expected, $actual, $message='')
+    {
+        PHPUnit_Framework_Assert::assertThat(
+            $actual,
+            new PHPUnit_RecordManager_Constraint_SolrEquals($expected),
+            $message
+        );
+    }
+
 }
